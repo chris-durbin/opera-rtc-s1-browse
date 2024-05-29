@@ -64,6 +64,7 @@ def normalize_image_array(input_array: np.ndarray) -> np.ndarray:
     Returns
         The normalized array.
     """
+    input_array = input_array.astype(float)
     min_percentile = 3
     max_percentile = 97
     vmin = np.nanpercentile(input_array, min_percentile)
