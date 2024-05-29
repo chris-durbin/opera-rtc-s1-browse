@@ -155,8 +155,6 @@ def create_browse_image(co_pol_path: Path, cross_pol_path: Path, working_dir: Pa
 
 def create_browse_and_upload(
     granule: str,
-    earthdata_username: str = None,
-    earthdata_password: str = None,
     bucket: str = None,
     bucket_prefix: str = '',
     working_dir: Optional[Path] = None,
@@ -165,8 +163,6 @@ def create_browse_and_upload(
 
     Args:
         granule: The granule to create browse images for.
-        earthdata_username: Username for NASA's EarthData.
-        earthdata_password: Password for NASA's EarthData.
         bucket: AWS S3 bucket for upload the final product(s).
         bucket_prefix: Add a bucket prefix to product(s).
         working_dir: Working directory to store intermediate files.
@@ -190,8 +186,6 @@ def main():
         create_browse OPERA_L2_RTC-S1_T035-073251-IW2_20240113T020816Z_20240113T113128Z_S1A_30_v1.0
     """
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('--earthdata-username', default=None, help="Username for NASA's EarthData")
-    parser.add_argument('--earthdata-password', default=None, help="Password for NASA's EarthData")
     parser.add_argument('--bucket', help='AWS S3 bucket for uploading the final product')
     parser.add_argument('--bucket-prefix', default='', help='Add a bucket prefix for product')
     parser.add_argument('granule', type=str, help='OPERA S1 RTC granule to create a browse image for.')

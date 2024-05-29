@@ -13,8 +13,7 @@ To explore the available options, run:
 ```bash
 python -m opera_rtc_s1_browse --help
 ```
-These options allow you to specify your Earthdata Login credentials and the AWS S3 bucket path where the browse image will be uploaded.
-
+These options allow you to specify an AWS S3 bucket path where the browse image will be uploaded.
 
 ## Setup
 ## Installation
@@ -33,8 +32,7 @@ python -m pip install -e .
 ```
 
 ### Credentials
-To use `opera_rtc_s1_browse`, you must provide your Earthdata Login credentials via the tool's CLI,
-two environment variables (`EARTHDATA_USERNAME` and `EARTHDATA_PASSWORD`), or via your `.netrc` file.
+To use `opera_rtc_s1_browse`, you must provide your Earthdata Login credentials via two environment variables (`EARTHDATA_USERNAME` and `EARTHDATA_PASSWORD`), or via your `.netrc` file.
 
 If you do not already have an Earthdata account, you can sign up [here](https://urs.earthdata.nasa.gov/home).
 
