@@ -43,12 +43,14 @@ def download_data(granule: str, working_dir: Path) -> Tuple[Path, Path]:
         raise ValueError('No cross-pol found in granule.')
     cross_pol = cross_pol[0]
 
+    co_pol_path = working_dir / Path(co_pol).name
+    cross_pol_path = working_dir / Path(cross_pol).name
+    if co_pol_path.exists() and cross_pol_path.exists():
+        return co_pol_path, cross_pol_path
+
     username, password = get_earthdata_credentials()
     session = asf_search.ASFSession().auth_with_creds(username, password)
     asf_search.download_urls(urls=[co_pol, cross_pol], path=working_dir, session=session)
-
-    co_pol_path = working_dir / Path(co_pol).name
-    cross_pol_path = working_dir / Path(cross_pol).name
     return co_pol_path, cross_pol_path
 
 
@@ -165,9 +167,7 @@ def create_browse_and_upload(
     if working_dir is None:
         working_dir = Path.cwd()
 
-    download_data(granule, working_dir)
-    co_pol_path = working_dir / f'{granule}_VV.tif'
-    cross_pol_path = working_dir / f'{granule}_VH.tif'
+    co_pol_path, cross_pol_path = download_data(granule, working_dir)
     browse_path = create_browse_image(co_pol_path, cross_pol_path, working_dir)
 
     if bucket:
