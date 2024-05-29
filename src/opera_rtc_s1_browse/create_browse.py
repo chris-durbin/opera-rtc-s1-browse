@@ -5,7 +5,7 @@ opera-rtc-s1-browse processing
 import argparse
 import logging
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Tuple
 
 import asf_search
 import numpy as np
@@ -18,7 +18,16 @@ log = logging.getLogger(__name__)
 gdal.UseExceptions()
 
 
-def download_data(granule: str, working_dir: Path):
+def download_data(granule: str, working_dir: Path) -> Tuple[Path, Path]:
+    """Download co-pol and cross-pol images for an OPERA S1 RTC granule.
+
+    Args:
+        granule: The granule to download data for.
+        working_dir: Working directory to store the downloaded files.
+
+    Returns:
+        Path to the co-pol and cross-pol images.
+    """
     result = asf_search.granule_search([granule])[0]
     urls = result.properties['additionalUrls']
     urls.append(result.properties['url'])
@@ -42,37 +51,47 @@ def download_data(granule: str, working_dir: Path):
     return co_pol_path, cross_pol_path
 
 
-def normalize_image_band(band_image: np.ndarray) -> np.ndarray:
+def normalize_image_array(input_array: np.ndarray) -> np.ndarray:
     """Function to normalize a browse image band.
-    Taken from OPERA-ADT/RTC.
+    Modified from OPERA-ADT/RTC.
 
     Args:
-        band_image: Input image to be normalized.
+        input_array: The array to normalize.
 
     Returns
-        The normalized image
+        The normalized array.
     """
     min_percentile = 3
     max_percentile = 97
-    vmin = np.nanpercentile(band_image, min_percentile)
-    vmax = np.nanpercentile(band_image, max_percentile)
+    vmin = np.nanpercentile(input_array, min_percentile)
+    vmax = np.nanpercentile(input_array, max_percentile)
 
     # gamma correction: 0.5
-    is_not_negative = band_image - vmin >= 0
-    is_negative = band_image - vmin < 0
-    band_image[is_not_negative] = np.sqrt((band_image[is_not_negative] - vmin) / (vmax - vmin))
-    band_image[is_negative] = 0
-    band_image[np.isnan(band_image)] = 0
-    band_image = np.round(np.clip(band_image, 0, 1) * 255).astype(np.uint8)
-    return band_image
+    is_not_negative = input_array - vmin >= 0
+    is_negative = input_array - vmin < 0
+    input_array[is_not_negative] = np.sqrt((input_array[is_not_negative] - vmin) / (vmax - vmin))
+    input_array[is_negative] = 0
+    input_array[np.isnan(input_array)] = 0
+    normalized_array = np.round(np.clip(input_array, 0, 1) * 255).astype(np.uint8)
+    return normalized_array
 
 
-def create_browse_array(co_pol_array, cross_pol_array):
+def create_browse_array(co_pol_array: np.ndarray, cross_pol_array: np.ndarray) -> np.ndarray:
+    """Create a browse image array for an OPERA S1 RTC granule.
+    Bands are normalized and follow the format: [co-pol, cross-pol, co-pol, no-data].
+
+    Args:
+        co_pol_array: Co-pol image array.
+        cross_pol_array: Cross-pol image array.
+
+    Returns:
+       Browse image array.
+    """
     co_pol_nodata = ~np.isnan(co_pol_array)
-    co_pol = normalize_image_band(co_pol_array)
+    co_pol = normalize_image_array(co_pol_array)
 
     cross_pol_nodata = ~np.isnan(cross_pol_array)
-    cross_pol = normalize_image_band(cross_pol_array)
+    cross_pol = normalize_image_array(cross_pol_array)
 
     no_data = (np.logical_and(co_pol_nodata, cross_pol_nodata) * 255).astype(np.uint8)
     browse_image = np.stack([co_pol, cross_pol, co_pol, no_data], axis=-1)
@@ -80,7 +99,16 @@ def create_browse_array(co_pol_array, cross_pol_array):
 
 
 def create_browse_image(co_pol_path: Path, cross_pol_path: Path, working_dir: Path) -> Path:
-    """Create browse images for an OPERA S1 RTC granule."""
+    """Create a browse image for an OPERA S1 RTC granul meeting GIBS requirements.
+
+    Args:
+        co_pol_path: Path to the co-pol image.
+        cross_pol_path: Path to the cross-pol image.
+        working_dir: Working directory to store intermediate files.
+
+    Returns:
+        Path to the created browse image.
+    """
     co_pol_ds = gdal.Open(str(co_pol_path))
     co_pol = co_pol_ds.GetRasterBand(1).ReadAsArray()
 
@@ -136,7 +164,7 @@ def create_browse_and_upload(
     if working_dir is None:
         working_dir = Path.cwd()
 
-    # download_data(granule, working_dir)
+    download_data(granule, working_dir)
     co_pol_path = working_dir / f'{granule}_VV.tif'
     cross_pol_path = working_dir / f'{granule}_VH.tif'
     create_browse_image(co_pol_path, cross_pol_path, working_dir)
@@ -154,7 +182,7 @@ def main():
     parser.add_argument('--earthdata-password', default=None, help="Password for NASA's EarthData")
     parser.add_argument('--bucket', help='AWS S3 bucket HyP3 for upload the final product(s)')
     parser.add_argument('--bucket-prefix', default='', help='Add a bucket prefix to product(s)')
-    parser.add_argument('granule', type=str, help='OPERA S1 RTC granule to create a browse imagery for.')
+    parser.add_argument('granule', type=str, help='OPERA S1 RTC granule to create a browse image for.')
     args = parser.parse_args()
 
     create_browse_and_upload(**args.__dict__)
