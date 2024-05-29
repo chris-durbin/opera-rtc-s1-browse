@@ -103,7 +103,7 @@ def create_browse_array(co_pol_array: np.ndarray, cross_pol_array: np.ndarray) -
 
 
 def create_browse_image(co_pol_path: Path, cross_pol_path: Path, working_dir: Path) -> Path:
-    """Create a browse image for an OPERA S1 RTC granul meeting GIBS requirements.
+    """Create a browse image for an OPERA S1 RTC granule meeting GIBS requirements.
 
     Args:
         co_pol_path: Path to the co-pol image.
