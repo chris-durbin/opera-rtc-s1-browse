@@ -54,21 +54,27 @@ def download_data(granule: str, working_dir: Path) -> Tuple[Path, Path]:
     return co_pol_path, cross_pol_path
 
 
-def normalize_image_array(input_array: np.ndarray) -> np.ndarray:
+def normalize_image_array(
+    input_array: np.ndarray, vmin: Optional[float] = None, vmax: Optional[float] = None
+) -> np.ndarray:
     """Function to normalize a browse image band.
     Modified from OPERA-ADT/RTC.
 
     Args:
         input_array: The array to normalize.
+        vmin: The minimum value to normalize to.
+        vmax: The maximum value to normalize to.
 
     Returns
         The normalized array.
     """
     input_array = input_array.astype(float)
-    min_percentile = 3
-    max_percentile = 97
-    vmin = np.nanpercentile(input_array, min_percentile)
-    vmax = np.nanpercentile(input_array, max_percentile)
+
+    if vmin is None:
+        vmin = np.nanpercentile(input_array, 3)
+
+    if vmax is None:
+        vmax = np.nanpercentile(input_array, 97)
 
     # gamma correction: 0.5
     is_not_negative = input_array - vmin >= 0
@@ -92,10 +98,10 @@ def create_browse_array(co_pol_array: np.ndarray, cross_pol_array: np.ndarray) -
        Browse image array.
     """
     co_pol_nodata = ~np.isnan(co_pol_array)
-    co_pol = normalize_image_array(co_pol_array)
+    co_pol = normalize_image_array(co_pol_array, 0.02, 0.3)
 
     cross_pol_nodata = ~np.isnan(cross_pol_array)
-    cross_pol = normalize_image_array(cross_pol_array)
+    cross_pol = normalize_image_array(cross_pol_array, 0.003, 0.08)
 
     no_data = (np.logical_and(co_pol_nodata, cross_pol_nodata) * 255).astype(np.uint8)
     browse_image = np.stack([co_pol, cross_pol, co_pol, no_data], axis=-1)
@@ -121,7 +127,7 @@ def create_browse_image(co_pol_path: Path, cross_pol_path: Path, working_dir: Pa
 
     browse_array = create_browse_array(co_pol, cross_pol)
 
-    tmp_browse_path = working_dir / f'{co_pol_path.stem}_tmp.tif'
+    tmp_browse_path = working_dir / 'tmp.tif'
     driver = gdal.GetDriverByName('GTiff')
     browse_ds = driver.Create(str(tmp_browse_path), browse_array.shape[1], browse_array.shape[0], 4, gdal.GDT_Byte)
     browse_ds.SetGeoTransform(co_pol_ds.GetGeoTransform())
@@ -133,7 +139,7 @@ def create_browse_image(co_pol_path: Path, cross_pol_path: Path, working_dir: Pa
     cross_pol_ds = None
     browse_ds = None
 
-    browse_path = working_dir / f'{co_pol_path.stem}_rgb.tif'
+    browse_path = working_dir / f'{co_pol_path.stem[:-3]}_rgb.tif'
     gdal.Warp(
         browse_path,
         tmp_browse_path,
