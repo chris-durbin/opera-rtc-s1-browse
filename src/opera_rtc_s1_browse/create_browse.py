@@ -133,7 +133,7 @@ def create_browse_image(co_pol_path: Path, cross_pol_path: Path, working_dir: Pa
     cross_pol_ds = None
     browse_ds = None
 
-    browse_path = working_dir / f'{co_pol_path.stem}_browse.tif'
+    browse_path = working_dir / f'{co_pol_path.stem}_rgb.tif'
     gdal.Warp(
         browse_path,
         tmp_browse_path,
@@ -170,6 +170,8 @@ def create_browse_and_upload(
 
     co_pol_path, cross_pol_path = download_data(granule, working_dir)
     browse_path = create_browse_image(co_pol_path, cross_pol_path, working_dir)
+    co_pol_path.unlink()
+    cross_pol_path.unlink()
 
     if bucket:
         upload_file_to_s3(browse_path, bucket, bucket_prefix)
