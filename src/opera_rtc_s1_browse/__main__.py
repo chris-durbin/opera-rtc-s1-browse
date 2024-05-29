@@ -7,7 +7,7 @@ from argparse import ArgumentParser
 from hyp3lib.aws import upload_file_to_s3
 from hyp3lib.image import create_thumbnail
 
-from opera_rtc_s1_browse.process import process_opera_rtc_s1_browse
+from opera_rtc_s1_browse.create_browse import process_opera_rtc_s1_browse
 
 
 def main():
