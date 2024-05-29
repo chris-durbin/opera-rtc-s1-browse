@@ -9,6 +9,7 @@ from typing import Optional, Tuple
 
 import asf_search
 import numpy as np
+from hyp3lib.aws import upload_file_to_s3
 from osgeo import gdal
 
 from opera_rtc_s1_browse.auth import get_earthdata_credentials
@@ -150,7 +151,7 @@ def create_browse_and_upload(
     bucket: str = None,
     bucket_prefix: str = '',
     working_dir: Optional[Path] = None,
-) -> Path:
+) -> None:
     """Create browse images for an OPERA S1 RTC granule.
 
     Args:
@@ -167,8 +168,10 @@ def create_browse_and_upload(
     download_data(granule, working_dir)
     co_pol_path = working_dir / f'{granule}_VV.tif'
     cross_pol_path = working_dir / f'{granule}_VH.tif'
-    create_browse_image(co_pol_path, cross_pol_path, working_dir)
-    return None
+    browse_path = create_browse_image(co_pol_path, cross_pol_path, working_dir)
+
+    if bucket:
+        upload_file_to_s3(browse_path, bucket, bucket_prefix)
 
 
 def main():
@@ -180,8 +183,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('--earthdata-username', default=None, help="Username for NASA's EarthData")
     parser.add_argument('--earthdata-password', default=None, help="Password for NASA's EarthData")
-    parser.add_argument('--bucket', help='AWS S3 bucket HyP3 for upload the final product(s)')
-    parser.add_argument('--bucket-prefix', default='', help='Add a bucket prefix to product(s)')
+    parser.add_argument('--bucket', help='AWS S3 bucket for uploading the final product')
+    parser.add_argument('--bucket-prefix', default='', help='Add a bucket prefix for product')
     parser.add_argument('granule', type=str, help='OPERA S1 RTC granule to create a browse image for.')
     args = parser.parse_args()
 
