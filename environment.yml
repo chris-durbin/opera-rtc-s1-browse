@@ -4,6 +4,8 @@ channels:
   - nodefaults
 dependencies:
   - python>=3.8
+  - asf_search
+  - gdal
   - pip
   # For packaging, and testing
   - flake8

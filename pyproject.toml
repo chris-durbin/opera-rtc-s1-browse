@@ -23,6 +23,7 @@ classifiers=[
 ]
 dependencies = [
     "hyp3lib>=3,<4",
+    "asf_search",
     # insert python dependencies as list here
 ]
 dynamic = ["version", "readme"]
@@ -41,6 +42,9 @@ develop = [
 [project.urls]
 Homepage = "opera-rtc-s1-browse"
 Documentation = "https://hyp3-docs.asf.alaska.edu"
+
+[project.scripts]
+create_browse = "opera_rtc_s1_browse.create_browse:main"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
