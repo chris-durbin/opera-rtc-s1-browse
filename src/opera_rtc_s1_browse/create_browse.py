@@ -98,11 +98,9 @@ def create_browse_array(co_pol_array: np.ndarray, cross_pol_array: np.ndarray) -
        Browse image array.
     """
     co_pol_nodata = ~np.isnan(co_pol_array)
-    # TODO: Finalize thresholds
     co_pol = normalize_image_array(co_pol_array, 0, 0.15)
 
     cross_pol_nodata = ~np.isnan(cross_pol_array)
-    # TODO: Finalize thresholds
     cross_pol = normalize_image_array(cross_pol_array, 0, 0.025)
 
     no_data = (np.logical_and(co_pol_nodata, cross_pol_nodata) * 255).astype(np.uint8)
