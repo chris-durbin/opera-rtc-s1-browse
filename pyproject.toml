@@ -16,31 +16,29 @@ classifiers=[
     "Natural Language :: English",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
-    "hyp3lib>=3,<4",
-    # insert python dependencies as list here
+    "asf_search",
+    "boto3",
+    "gdal",
 ]
 dynamic = ["version", "readme"]
 
 [project.optional-dependencies]
 develop = [
-    "flake8",
-    "flake8-import-order",
-    "flake8-blind-except",
-    "flake8-builtins",
     "pytest",
     "pytest-cov",
-    "pytest-console-scripts",
 ]
 
 [project.urls]
 Homepage = "opera-rtc-s1-browse"
-Documentation = "https://hyp3-docs.asf.alaska.edu"
+Documentation = "https://github.com/asfhyp3/opera-rtc-s1-browse#opera-rtc-s1-browse"
+
+[project.scripts]
+create_browse = "opera_rtc_s1_browse.create_browse:main"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
