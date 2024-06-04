@@ -35,6 +35,8 @@ Resources:
           EARTHDATA_USERNAME: !Ref EarthdataUsername
           EARTHDATA_PASSWORD: !Ref EarthdataPassword
           BUCKET: !Ref Bucket
+          GDAL_DATA: /opt/share/gdal
+          PROJ_LIB: /opt/share/proj
 
   LambdaLogGroup:
     Type: AWS::Logs::LogGroup
