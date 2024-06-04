@@ -182,7 +182,7 @@ def create_browse_and_upload(
 
 
 def lambda_handler(event, context):
-    create_browse_and_upload(event['granule'], os.environ['BUCKET'])
+    create_browse_and_upload(event['granule'], os.environ['BUCKET'], working_dir=Path('/tmp'))
 
 
 def main():
