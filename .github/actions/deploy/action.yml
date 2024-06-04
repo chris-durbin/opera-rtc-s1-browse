@@ -6,8 +6,6 @@ inputs:
     required: true
   AWS_SECRET_ACCESS_KEY:
     required: true
-  CLOUDFORMATION_ROLE_ARN:
-    required: true
   EARTHDATA_USERNAME:
     required: true
   EARTHDATA_PASSWORD:
@@ -44,7 +42,6 @@ runs:
         aws cloudformation deploy \
           --stack-name ${STACK_NAME} \
           --template-file packaged.yml \
-          --role-arn ${CLOUDFORMATION_ROLE_ARN} \
           --capabilities CAPABILITY_IAM \
           --parameter-overrides \
               EarthdataUsername="${EARTHDATA_USERNAME}" \
