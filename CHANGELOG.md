@@ -12,3 +12,5 @@ and uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 * RTC granule download functionality
 * Browse image creation functionality
 
+### Removed
+* Unused functionality created during HyP3-Cookiecutter setup
