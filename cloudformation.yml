@@ -12,21 +12,11 @@ Resources:
   Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      PublicAccessBlockConfiguration:
-        BlockPublicAcls: True
-        IgnorePublicAcls: True
-        BlockPublicPolicy: True
-        RestrictPublicBuckets: True
       LifecycleConfiguration:
         Rules:
           - Status: Enabled
-            ExpirationInDays: 7
-          - Status: Enabled
             AbortIncompleteMultipartUpload:
               DaysAfterInitiation: 1
-      OwnershipControls:
-        Rules:
-          - ObjectOwnership: BucketOwnerEnforced
       Tags:
         - Key: DAR
           Value: "NO"
@@ -62,20 +52,16 @@ Resources:
           Principal:
             Service: lambda.amazonaws.com
           Effect: Allow
-      ManagedPolicyArns:
-        - !Ref LambdaPolicy
-
-  LambdaPolicy:
-    Type: AWS::IAM::ManagedPolicy
-    Properties:
-      PolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Effect: Allow
-            Action:
-              - logs:CreateLogStream
-              - logs:PutLogEvents
-            Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*"
-          - Effect: Allow
-            Action: s3:PutObject
-            Resource: !GetAtt Bucket.Arn
+      Policies:
+        - PolicyName: policy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*"
+              - Effect: Allow
+                Action: s3:PutObject
+                Resource: !Sub "arn:aws:s3:::${Bucket}/*"
