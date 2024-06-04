@@ -30,6 +30,8 @@ Resources:
       Role: !GetAtt LambdaRole.Arn
       Runtime: python3.11
       Timeout: 300
+      Layers:
+        - arn:aws:lambda:us-west-2:524387336408:layer:gdal38:4
       Environment:
         Variables:
           EARTHDATA_USERNAME: !Ref EarthdataUsername
