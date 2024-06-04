@@ -178,7 +178,8 @@ def create_browse_and_upload(
     cross_pol_path.unlink()
 
     if bucket:
-        s3.upload_file(browse_path, bucket, bucket_prefix)
+        key = str(Path(bucket_prefix) / browse_path.name)
+        s3.upload_file(browse_path, bucket, key)
 
 
 def lambda_handler(event, context):
