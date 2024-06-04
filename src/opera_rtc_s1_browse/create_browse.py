@@ -5,7 +5,6 @@ opera-rtc-s1-browse processing
 import argparse
 import logging
 from pathlib import Path
-from typing import Optional, Tuple
 
 import asf_search
 import boto3
@@ -20,7 +19,7 @@ gdal.UseExceptions()
 s3 = boto3.client('s3')
 
 
-def download_data(granule: str, working_dir: Path) -> Tuple[Path, Path]:
+def download_data(granule: str, working_dir: Path) -> tuple[Path, Path]:
     """Download co-pol and cross-pol images for an OPERA S1 RTC granule.
 
     Args:
@@ -56,7 +55,7 @@ def download_data(granule: str, working_dir: Path) -> Tuple[Path, Path]:
 
 
 def normalize_image_array(
-    input_array: np.ndarray, vmin: Optional[float] = None, vmax: Optional[float] = None
+    input_array: np.ndarray, vmin: float | None = None, vmax: float | None = None
 ) -> np.ndarray:
     """Function to normalize a browse image band.
     Modified from OPERA-ADT/RTC.
@@ -158,7 +157,7 @@ def create_browse_and_upload(
     granule: str,
     bucket: str = None,
     bucket_prefix: str = '',
-    working_dir: Optional[Path] = None,
+    working_dir: Path | None = None,
 ) -> None:
     """Create browse images for an OPERA S1 RTC granule.
 
