@@ -156,7 +156,6 @@ def create_browse_image(co_pol_path: Path, cross_pol_path: Path, working_dir: Pa
 def create_browse_and_upload(
     granule: str,
     bucket: str = None,
-    bucket_prefix: str = '',
     working_dir: Path | None = None,
 ) -> None:
     """Create browse images for an OPERA S1 RTC granule.
@@ -164,7 +163,6 @@ def create_browse_and_upload(
     Args:
         granule: The granule to create browse images for.
         bucket: AWS S3 bucket for upload the final product(s).
-        bucket_prefix: Add a bucket prefix to product(s).
         working_dir: Working directory to store intermediate files.
     """
     if working_dir is None:
@@ -176,8 +174,7 @@ def create_browse_and_upload(
     cross_pol_path.unlink()
 
     if bucket:
-        key = str(Path(bucket_prefix) / browse_path.name)
-        s3.upload_file(browse_path, bucket, key)
+        s3.upload_file(browse_path, bucket, browse_path.name)
 
 
 def main():
@@ -188,7 +185,6 @@ def main():
     """
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('--bucket', help='AWS S3 bucket for uploading the final product')
-    parser.add_argument('--bucket-prefix', default='', help='Add a bucket prefix for product')
     parser.add_argument('granule', type=str, help='OPERA S1 RTC granule to create a browse image for.')
     args = parser.parse_args()
 
