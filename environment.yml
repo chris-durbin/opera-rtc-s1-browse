@@ -4,9 +4,11 @@ channels:
   - nodefaults
 dependencies:
   - python>=3.8
+  - pip
+  # For running
+  - hyp3lib>=3,<4
   - asf_search
   - gdal
-  - pip
   # For packaging, and testing
   - flake8
   - flake8-import-order
@@ -18,5 +20,3 @@ dependencies:
   - pytest
   - pytest-console-scripts
   - pytest-cov
-  # For running
-  - hyp3lib>=3,<4
