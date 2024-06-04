@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - develop
+      - lambda
 
 concurrency: deploy-uat
 
