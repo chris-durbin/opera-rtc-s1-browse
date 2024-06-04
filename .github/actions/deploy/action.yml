@@ -23,17 +23,13 @@ runs:
         aws-secret-access-key: ${{ inputs.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-west-2
 
-    - uses: actions/setup-python@v4
-      with:
-        python-version: 3.12
-
     - shell: bash
       run: |
-        docker build -t package:latest .
-        docker run --name lambda -itd package:latest bash
-        docker cp lambda:/var/deployment_package deployment_package
-        docker stop lambda
-        docker rm lambda
+        docker build -t packaging-image .
+        docker run --name packaging-container -itd packaging-image bash
+        docker cp packaging-container:/var/deployment_package deployment_package
+        docker stop packaging-container
+        docker rm packaging-container
 
     - shell: bash
       run: |
