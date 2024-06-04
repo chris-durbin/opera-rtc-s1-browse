@@ -6,8 +6,8 @@ dependencies:
   - python>=3.8
   - pip
   # For running
-  - hyp3lib>=3,<4
   - asf_search
+  - boto3
   - gdal
   # For packaging, and testing
   - flake8

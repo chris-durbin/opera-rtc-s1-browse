@@ -22,8 +22,8 @@ classifiers=[
     "Programming Language :: Python :: 3.11",
 ]
 dependencies = [
-    "hyp3lib>=3,<4",
     "asf_search",
+    "boto3",
     "gdal",
 ]
 dynamic = ["version", "readme"]
