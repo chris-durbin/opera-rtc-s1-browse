@@ -4,12 +4,13 @@ opera-rtc-s1-browse processing
 
 import argparse
 import logging
+import os
 from pathlib import Path
 from typing import Optional, Tuple
 
 import asf_search
+import boto3
 import numpy as np
-from hyp3lib.aws import upload_file_to_s3
 from osgeo import gdal
 
 from opera_rtc_s1_browse.auth import get_earthdata_credentials
@@ -17,6 +18,7 @@ from opera_rtc_s1_browse.auth import get_earthdata_credentials
 
 log = logging.getLogger(__name__)
 gdal.UseExceptions()
+s3 = boto3.client('s3')
 
 
 def download_data(granule: str, working_dir: Path) -> Tuple[Path, Path]:
@@ -176,7 +178,11 @@ def create_browse_and_upload(
     cross_pol_path.unlink()
 
     if bucket:
-        upload_file_to_s3(browse_path, bucket, bucket_prefix)
+        s3.upload_file(browse_path, bucket, bucket_prefix)
+
+
+def lambda_handler(event, context):
+    create_browse_and_upload(event['granule'], os.environ['BUCKET'])
 
 
 def main():
