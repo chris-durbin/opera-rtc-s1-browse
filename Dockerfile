@@ -7,11 +7,9 @@ ENV \
   GEOS_CONFIG=/opt/bin/geos-config \
   PATH=/opt/bin:$PATH
 
-ENV PACKAGE_PREFIX=/var/opera_rtc_s1_browse
+ENV PACKAGE_PREFIX=/var/deployment_package
 
 COPY src/opera_rtc_s1_browse ${PACKAGE_PREFIX}
 
 COPY requirements.txt /tmp/requirements.txt
 RUN python -m pip install -r /tmp/requirements.txt -t $PACKAGE_PREFIX
-
-RUN cd $PACKAGE_PREFIX && zip -r9q /tmp/package.zip *

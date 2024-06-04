@@ -31,7 +31,9 @@ runs:
       run: |
         docker build -t package:latest .
         docker run --name lambda -itd package:latest bash
-        docker cp lambda:/tmp/package.zip package.zip
+        docker cp lambda:/var/deployment_package deployment_package
+        docker stop lambda
+        docker rm lambda
 
     - shell: bash
       run: |
