@@ -26,7 +26,7 @@ Resources:
     Properties:
       Code: deployment_package/
       Handler: opera_rtc_s1_browse.create_browse.lambda_handler
-      MemorySize: 256
+      MemorySize: 512
       Role: !GetAtt LambdaRole.Arn
       Runtime: python3.11
       Timeout: 300
