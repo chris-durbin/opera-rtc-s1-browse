@@ -39,12 +39,12 @@ runs:
       run: |
         aws cloudformation package \
           --template-file cloudformation.yml \
-          --s3-bucket ${TEMPLATE_BUCKET} \
+          --s3-bucket ${{ inputs.TEMPLATE_BUCKET }} \
           --output-template-file packaged.yml
         aws cloudformation deploy \
-          --stack-name ${STACK_NAME} \
+          --stack-name ${{ inputs.STACK_NAME }} \
           --template-file packaged.yml \
           --capabilities CAPABILITY_IAM \
           --parameter-overrides \
-              EarthdataUsername="${EARTHDATA_USERNAME}" \
-              EarthdataPassword="${EARTHDATA_PASSWORD}"
+              EarthdataUsername="${{ inputs.EARTHDATA_USERNAME }}" \
+              EarthdataPassword="${{ inputs.EARTHDATA_PASSWORD }}"
