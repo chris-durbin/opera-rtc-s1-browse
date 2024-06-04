@@ -24,7 +24,7 @@ classifiers=[
 dependencies = [
     "asf_search",
     "boto3",
-    # insert python dependencies as list here
+    "gdal",
 ]
 dynamic = ["version", "readme"]
 

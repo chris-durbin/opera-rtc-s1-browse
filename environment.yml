@@ -4,9 +4,11 @@ channels:
   - nodefaults
 dependencies:
   - python>=3.8
-  - asf_search
-  - gdal
   - pip
+  # For running
+  - asf_search
+  - boto3
+  - gdal
   # For packaging, and testing
   - flake8
   - flake8-import-order
@@ -18,5 +20,3 @@ dependencies:
   - pytest
   - pytest-console-scripts
   - pytest-cov
-  # For running
-  - boto3
