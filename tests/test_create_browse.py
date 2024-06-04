@@ -15,7 +15,7 @@ def test_normalize_image_array():
     assert np.array_equal(output_array, golden_array)
 
 
-def test_create_browse_arry():
+def test_create_browse_array():
     vv_min, vv_max = 0, 0.15
     test_vv = np.array([[0, vv_min], [(vv_min + vv_max) / 2, vv_max], [np.nan, np.nan]])
     vh_min, vh_max = 0, 0.025

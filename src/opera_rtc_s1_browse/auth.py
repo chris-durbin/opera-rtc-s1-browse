@@ -72,6 +72,6 @@ def get_earthdata_credentials() -> Tuple[str, str]:
         return username, password
 
     raise ValueError(
-        'Please provide NASA EarthData credentials via the '
+        'Please provide NASA Earthdata credentials via the '
         'EARTHDATA_USERNAME and EARTHDATA_PASSWORD environment variables, or your netrc file.'
     )
