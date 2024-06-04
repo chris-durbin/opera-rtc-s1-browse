@@ -9,7 +9,7 @@ ENV \
 
 ENV PACKAGE_PREFIX=/var/deployment_package
 
-COPY src/opera_rtc_s1_browse ${PACKAGE_PREFIX}
+COPY src ${PACKAGE_PREFIX}
 
 COPY requirements.txt /tmp/requirements.txt
 RUN python -m pip install -r /tmp/requirements.txt -t $PACKAGE_PREFIX

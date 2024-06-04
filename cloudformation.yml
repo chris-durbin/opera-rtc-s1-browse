@@ -25,7 +25,7 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       Code: deployment_package/
-      Handler: create_browse.lambda_handler
+      Handler: opera_rtc_s1_browse.create_browse.lambda_handler
       MemorySize: 128
       Role: !GetAtt LambdaRole.Arn
       Runtime: python3.11
