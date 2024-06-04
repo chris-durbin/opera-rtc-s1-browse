@@ -1,4 +1,4 @@
 asf_search==7.1.2
 boto3==1.34.118
-gdal==3.9.0
+gdal==3.8
 numpy==1.26.4
