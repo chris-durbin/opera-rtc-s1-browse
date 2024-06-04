@@ -1,5 +1,4 @@
 name: Deploy to AWS
-description: Deploy the STAC API
 
 inputs:
   AWS_ACCESS_KEY_ID:
