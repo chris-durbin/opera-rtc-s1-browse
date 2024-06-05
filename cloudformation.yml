@@ -24,21 +24,19 @@ Resources:
   Lambda:
     Type: AWS::Lambda::Function
     Properties:
-      Code: deployment_package/
+      Code: package.zip
       Handler: opera_rtc_s1_browse.create_browse.lambda_handler
       MemorySize: 512
       Role: !GetAtt LambdaRole.Arn
       Runtime: python3.11
       Timeout: 300
-      Layers:
-        - arn:aws:lambda:us-west-2:524387336408:layer:gdal38:4
       Environment:
         Variables:
           EARTHDATA_USERNAME: !Ref EarthdataUsername
           EARTHDATA_PASSWORD: !Ref EarthdataPassword
           BUCKET: !Ref Bucket
-          GDAL_DATA: /opt/share/gdal
-          PROJ_LIB: /opt/share/proj
+          GDAL_DATA: /var/task/share/gdal
+          PROJ_LIB: /var/task/share/proj
 
   LambdaLogGroup:
     Type: AWS::Logs::LogGroup

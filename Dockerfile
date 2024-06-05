@@ -1,15 +1,20 @@
 FROM ghcr.io/lambgeo/lambda-gdal:3.8-python3.11
 
-ENV \
-  GDAL_DATA=/opt/share/gdal \
-  PROJ_LIB=/opt/share/proj \
-  GDAL_CONFIG=/opt/bin/gdal-config \
-  GEOS_CONFIG=/opt/bin/geos-config \
-  PATH=/opt/bin:$PATH
-
 ENV PACKAGE_PREFIX=/var/deployment_package
 
-COPY src ${PACKAGE_PREFIX}
+RUN yum install -y git zip
 
-COPY requirements.txt /tmp/requirements.txt
-RUN python -m pip install -r /tmp/requirements.txt -t $PACKAGE_PREFIX
+# Install python package and dependencies
+COPY . .
+RUN python -m pip install . -t $PACKAGE_PREFIX
+
+# Reduce size of the C libs
+RUN cd $PREFIX && find lib -name \*.so\* -exec strip {} \;
+
+# Create package.zip
+# Archive python code (installed in $PACKAGE_PREFIX/)
+RUN cd $PACKAGE_PREFIX && zip -r9q /tmp/package.zip *
+
+# Archive GDAL libs (in $PREFIX/lib $PREFIX/bin $PREFIX/share)
+RUN cd $PREFIX && zip -r9q --symlinks /tmp/package.zip lib/*.so* share
+RUN cd $PREFIX && zip -r9q --symlinks /tmp/package.zip bin/gdal* bin/ogr* bin/geos* bin/nearblack
