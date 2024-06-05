@@ -21,8 +21,8 @@ classifiers=[
     "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
-    "asf_search",
     "boto3",
+    "earthaccess",
     "gdal",
 ]
 dynamic = ["version", "readme"]

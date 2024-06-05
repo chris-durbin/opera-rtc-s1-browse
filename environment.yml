@@ -6,8 +6,8 @@ dependencies:
   - python=3.11
   - pip
   # For running
-  - asf_search
   - boto3
+  - earthaccess
   - gdal
   # For packaging, and testing
   - pytest

@@ -16,7 +16,7 @@ python -m opera_rtc_s1_browse --help
 These options allow you to specify an AWS S3 bucket path where the browse image will be uploaded.
 
 ## Setup
-## Installation
+### Installation
 1. Ensure that conda is installed on your system (we recommend using [mambaforge](https://github.com/conda-forge/miniforge#mambaforge) to reduce setup times).
 2. Download a local version of the `opera-s1-rtc-browse` repository (`git clone https://github.com/ASFHyP3/opera_rtc_s1_browse.git`)
 3. In the base directory for this project, call `mamba env create -f environment.yml` to create your Python environment and activate it (`mamba activate opera-s1-rtc-browse`)
@@ -44,7 +44,7 @@ To use the S3 upload functionality, you will also need to have [AWS credentials 
 `opera-rtc-s1-browse` is licensed under the BSD 2-Clause License. See the LICENSE file for more details.
 
 ## Contributing
-Contributions this project are welcome! If you would like to contribute, please submit a pull request on the GitHub repository.
+Contributions to this project are welcome! If you would like to contribute, please submit a pull request on the GitHub repository.
 
 ## Contact Us
 Want to talk about `opera-rtc-s1-browse`? We would love to hear from you!
