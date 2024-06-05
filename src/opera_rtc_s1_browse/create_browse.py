@@ -5,12 +5,10 @@ opera-rtc-s1-browse processing
 import argparse
 from pathlib import Path
 
-import asf_search
 import boto3
+import earthaccess
 import numpy as np
 from osgeo import gdal
-
-from opera_rtc_s1_browse.auth import get_earthdata_credentials
 
 
 gdal.UseExceptions()
@@ -27,28 +25,20 @@ def download_data(granule: str, working_dir: Path) -> tuple[Path, Path]:
     Returns:
         Path to the co-pol and cross-pol images.
     """
-    result = asf_search.granule_search([granule])[0]
-    urls = result.properties['additionalUrls']
-    urls.append(result.properties['url'])
+    results = earthaccess.search_data(
+        short_name='OPERA_L2_RTC-S1_V1',
+        granule_ur=granule,
+    )
+    if not results:
+        raise ValueError(f'Granule {granule} not found in collection OPERA_L2_RTC-S1_V1')
 
-    co_pol = [x for x in urls if 'VV' in x]
-    if not co_pol:
-        raise ValueError('No co-pol found in granule.')
-    co_pol = co_pol[0]
+    links = [link for link in results[0].data_links() if link.endswith('VV.tif') or link.endswith('VH.tif')]
+    if len(links) != 2:
+        raise ValueError(f'VV+VH links not found for granule {granule}')
 
-    cross_pol = [x for x in urls if 'VH' in x]
-    if not cross_pol:
-        raise ValueError('No cross-pol found in granule.')
-    cross_pol = cross_pol[0]
+    paths = earthaccess.download(links, str(working_dir))
 
-    co_pol_path = working_dir / Path(co_pol).name
-    cross_pol_path = working_dir / Path(cross_pol).name
-    if co_pol_path.exists() and cross_pol_path.exists():
-        return co_pol_path, cross_pol_path
-
-    username, password = get_earthdata_credentials()
-    session = asf_search.ASFSession().auth_with_creds(username, password)
-    asf_search.download_urls(urls=[co_pol, cross_pol], path=working_dir, session=session)
+    cross_pol_path, co_pol_path = [Path(path) for path in sorted(paths)]
     return co_pol_path, cross_pol_path
 
 
