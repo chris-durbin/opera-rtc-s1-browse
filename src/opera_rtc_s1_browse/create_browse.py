@@ -3,7 +3,6 @@ opera-rtc-s1-browse processing
 """
 
 import argparse
-import logging
 from pathlib import Path
 
 import asf_search
@@ -14,7 +13,6 @@ from osgeo import gdal
 from opera_rtc_s1_browse.auth import get_earthdata_credentials
 
 
-log = logging.getLogger(__name__)
 gdal.UseExceptions()
 s3 = boto3.client('s3')
 
