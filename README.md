@@ -18,8 +18,12 @@ These options allow you to specify an AWS S3 bucket path where the browse image 
 ## Setup
 ### Installation
 1. Ensure that conda is installed on your system (we recommend using [mambaforge](https://github.com/conda-forge/miniforge#mambaforge) to reduce setup times).
-2. Download a local version of the `opera-rtc-s1-browse` repository (`git clone git@github.com:ASFHyP3/opera-rtc-s1-browse.git`)
-3. In the base directory for this project, call `mamba env create -f environment.yml` to create your Python environment and activate it (`mamba activate opera-rtc-s1-browse`)
+2. Installing `gdal` via pip requires that `git`, `gcc`, and `g++` are installed on your system.
+3. Download a local version of the `opera-rtc-s1-browse` repository (`git clone git@github.com:ASFHyP3/opera-rtc-s1-browse.git`)
+4. In the base directory for this project, call `mamba env create -f environment.yml` to create your Python environment and activate it (`mamba activate opera-rtc-s1-browse`)
+5. If you encounter `cannot import name '_gdal_array' from 'osgeo'` when running `create_browse`, run
+   `pip install --no-cache --force-reinstall gdal[numpy]=="$(gdal-config --version)"`. See https://pypi.org/project/GDAL/#pip.
+   This issue may resolve itself if/when we upgrade to `gdal==3.9.0`.
 
 To run all commands in sequence use:
 ```bash
