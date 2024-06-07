@@ -2,6 +2,10 @@
 
 A tool for creating OPERA RTC Sentinel-1 browse images for [NASA Worldview](https://worldview.earthdata.nasa.gov).
 
+The tool is deployed as an AWS Lambda Function that takes in an OPERA RTC granule name and outputs a browse image to an
+S3 bucket. The tool depends on GDAL; we're leveraging [lambgeo/docker-lambda](https://github.com/lambgeo/docker-lambda)
+to install GDAL in our Lambda deployment package.
+
 ## Usage
 Once installed (see below for details) you can run the tool using the command:
 ```bash
