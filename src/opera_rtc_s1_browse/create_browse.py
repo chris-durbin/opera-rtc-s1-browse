@@ -3,6 +3,7 @@ opera-rtc-s1-browse processing
 """
 
 import argparse
+import os
 from pathlib import Path
 
 import boto3
@@ -163,6 +164,10 @@ def create_browse_and_upload(
 
     if bucket:
         s3.upload_file(browse_path, bucket, browse_path.name)
+
+
+def lambda_handler(event, context):
+    create_browse_and_upload(event['granule'], os.environ['BUCKET'], working_dir=Path('/tmp'))
 
 
 def main():
