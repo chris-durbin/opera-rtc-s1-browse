@@ -1,8 +1,17 @@
 version: 2
 updates:
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: pip
+    directory: /
     schedule:
-      interval: "weekly"
+      interval: weekly
     labels:
-      - "bumpless"
+      - bumpless
+    ignore:
+      # gdal version is dictated by https://github.com/lambgeo/docker-lambda, currently 3.8.3 
+      - dependency-name: gdal[numpy]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    labels:
+      - bumpless
