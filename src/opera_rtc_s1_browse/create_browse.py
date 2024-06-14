@@ -4,6 +4,7 @@ opera-rtc-s1-browse processing
 
 import argparse
 import os
+import tempfile
 from pathlib import Path
 
 import boto3
@@ -167,7 +168,8 @@ def create_browse_and_upload(
 
 
 def lambda_handler(event, context):
-    create_browse_and_upload(event['granule'], os.environ['BUCKET'], working_dir=Path('/tmp'))
+    with tempfile.TemporaryDirectory() as temp_dir:
+        create_browse_and_upload(event['granule'], os.environ['BUCKET'], working_dir=Path(temp_dir))
 
 
 def main():
