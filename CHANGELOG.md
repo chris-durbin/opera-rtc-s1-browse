@@ -10,6 +10,8 @@ and uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 * Output files are now deleted from disk when running in AWS Lambda
+### Removed
+* Obsolete `DAR` tag from S3 bucket
 
 ## [0.2.0]
 

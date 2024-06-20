@@ -17,9 +17,6 @@ Resources:
           - Status: Enabled
             AbortIncompleteMultipartUpload:
               DaysAfterInitiation: 1
-      Tags:
-        - Key: DAR
-          Value: "NO"
 
   Lambda:
     Type: AWS::Lambda::Function
