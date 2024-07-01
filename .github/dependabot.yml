@@ -7,8 +7,10 @@ updates:
     labels:
       - bumpless
     ignore:
-      # gdal version is dictated by https://github.com/lambgeo/docker-lambda, currently 3.8.3 
+      # gdal version is dictated by https://github.com/lambgeo/docker-lambda, currently 3.8.3
       - dependency-name: gdal[numpy]
+      # gdal 3.8.3 requires numpy<2.0.0
+      - dependency-name: numpy
   - package-ecosystem: github-actions
     directory: /
     schedule:
