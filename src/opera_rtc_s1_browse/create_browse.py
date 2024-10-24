@@ -57,12 +57,10 @@ def normalize_image_array(input_array: np.ndarray, vmin: float, vmax: float) -> 
         The normalized array.
     """
     input_array = input_array.astype(float)
-    is_not_negative = input_array - vmin >= 0
-    is_negative = input_array - vmin < 0
-    input_array[is_not_negative] = np.sqrt((input_array[is_not_negative] - vmin) / (vmax - vmin))
-    input_array[is_negative] = 0
-    input_array[np.isnan(input_array)] = 0
-    normalized_array = np.round(np.clip(input_array, 0, 1) * 255).astype(np.uint8)
+    amplitude_array = np.sqrt(input_array)
+    scaled_array = (amplitude_array - vmin) / (vmax - vmin)
+    scaled_array[np.isnan(input_array)] = 0
+    normalized_array = np.round(np.clip(scaled_array, 0, 1) * 255).astype(np.uint8)
     return normalized_array
 
 
