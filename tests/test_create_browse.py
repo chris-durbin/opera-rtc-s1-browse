@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import numpy as np
 
 from opera_rtc_s1_browse import create_browse
@@ -25,3 +27,16 @@ def test_create_browse_array():
     assert np.array_equal(output_array[:, :, 1], np.array([[0, 0, 0, 127, 255]]))
     assert np.array_equal(output_array[:, :, 2], np.array([[0, 0, 127, 255, 0]]))
     assert np.array_equal(output_array[:, :, 3], np.array([[0, 255, 255, 255, 0]]))
+
+
+def test_create_browse_image(tmp_path):
+    datadir = Path(__file__).parent / 'data'
+
+    co_pol_path = datadir / 'test_VV.tif'
+    cross_pol_path = datadir / 'test_VH.tif'
+
+    output_path = create_browse.create_browse_image(co_pol_path, cross_pol_path, tmp_path)
+    assert output_path == tmp_path / 'test_rgb.tif'
+
+    expected_image = datadir / 'test_rgb.tif'
+    assert output_path.read_bytes() == expected_image.read_bytes()
