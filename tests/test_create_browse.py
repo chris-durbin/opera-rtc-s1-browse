@@ -36,10 +36,8 @@ def test_create_browse_image(tmp_path):
     co_pol_path = datadir / 'test_VV.tif'
     cross_pol_path = datadir / 'test_VH.tif'
 
-    create_browse.create_browse_image(co_pol_path, cross_pol_path, tmp_path)
+    output_path = create_browse.create_browse_image(co_pol_path, cross_pol_path, tmp_path)
+    assert output_path == tmp_path / 'test_rgb.tif'
 
-    rgb_name = 'test_rgb.tif'
-    expected_image = datadir / rgb_name
-    actual_image = tmp_path / rgb_name
-
-    assert actual_image.read_bytes() == expected_image.read_bytes()
+    expected_image = datadir / 'test_rgb.tif'
+    assert output_path.read_bytes() == expected_image.read_bytes()
