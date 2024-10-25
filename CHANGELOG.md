@@ -15,13 +15,6 @@ and uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Removed
 * Support for deploying as an AWS Lambda application
 
-## [0.2.1]
-
-### Changed
-* Output files are now deleted from disk when running in AWS Lambda
-### Removed
-* Obsolete `DAR` tag from S3 bucket
-
 ## [0.2.0]
 
 ### Added
