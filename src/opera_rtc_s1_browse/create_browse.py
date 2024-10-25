@@ -4,6 +4,7 @@ opera-rtc-s1-browse processing
 
 import argparse
 import os
+import tempfile
 from pathlib import Path
 
 import boto3
@@ -43,41 +44,27 @@ def download_data(granule: str, working_dir: Path) -> tuple[Path, Path]:
     return co_pol_path, cross_pol_path
 
 
-def normalize_image_array(
-    input_array: np.ndarray, vmin: float | None = None, vmax: float | None = None
-) -> np.ndarray:
-    """Function to normalize a browse image band.
-    Modified from OPERA-ADT/RTC.
+def normalize_image_array(input_array: np.ndarray, vmin: float, vmax: float) -> np.ndarray:
+    """Function to normalize array values to a byte value between 0 and 255
 
     Args:
         input_array: The array to normalize.
-        vmin: The minimum value to normalize to.
-        vmax: The maximum value to normalize to.
+        vmin: The minimum value to normalize to (mapped to 0).
+        vmax: The maximum value to normalize to (mapped to 255).
 
     Returns
         The normalized array.
     """
     input_array = input_array.astype(float)
-
-    if vmin is None:
-        vmin = np.nanpercentile(input_array, 3)
-
-    if vmax is None:
-        vmax = np.nanpercentile(input_array, 97)
-
-    # gamma correction: 0.5
-    is_not_negative = input_array - vmin >= 0
-    is_negative = input_array - vmin < 0
-    input_array[is_not_negative] = np.sqrt((input_array[is_not_negative] - vmin) / (vmax - vmin))
-    input_array[is_negative] = 0
-    input_array[np.isnan(input_array)] = 0
-    normalized_array = np.round(np.clip(input_array, 0, 1) * 255).astype(np.uint8)
+    scaled_array = (input_array - vmin) / (vmax - vmin)
+    scaled_array[np.isnan(input_array)] = 0
+    normalized_array = np.round(np.clip(scaled_array, 0, 1) * 255).astype(np.uint8)
     return normalized_array
 
 
 def create_browse_array(co_pol_array: np.ndarray, cross_pol_array: np.ndarray) -> np.ndarray:
     """Create a browse image array for an OPERA S1 RTC granule.
-    Bands are normalized and follow the format: [co-pol, cross-pol, co-pol, no-data].
+    Input arrays are converted to amplitude, normalized, and returned as [co-pol, cross-pol, co-pol, no-data].
 
     Args:
         co_pol_array: Co-pol image array.
@@ -86,11 +73,15 @@ def create_browse_array(co_pol_array: np.ndarray, cross_pol_array: np.ndarray) -
     Returns:
        Browse image array.
     """
+    co_pol_range = [0.14, 0.52]
     co_pol_nodata = ~np.isnan(co_pol_array)
-    co_pol = normalize_image_array(co_pol_array, 0, 0.15)
+    co_pol_amplitude = np.sqrt(co_pol_array)
+    co_pol = normalize_image_array(co_pol_amplitude, *co_pol_range)
 
+    cross_pol_range = [0.05, 0.259]
     cross_pol_nodata = ~np.isnan(cross_pol_array)
-    cross_pol = normalize_image_array(cross_pol_array, 0, 0.025)
+    cross_pol_amplitude = np.sqrt(cross_pol_array)
+    cross_pol = normalize_image_array(cross_pol_amplitude, *cross_pol_range)
 
     no_data = (np.logical_and(co_pol_nodata, cross_pol_nodata) * 255).astype(np.uint8)
     browse_image = np.stack([co_pol, cross_pol, co_pol, no_data], axis=-1)
@@ -116,9 +107,16 @@ def create_browse_image(co_pol_path: Path, cross_pol_path: Path, working_dir: Pa
 
     browse_array = create_browse_array(co_pol, cross_pol)
 
-    tmp_browse_path = working_dir / 'tmp.tif'
+    browse_path = working_dir / f'{co_pol_path.stem[:-3]}_rgb.tif'
     driver = gdal.GetDriverByName('GTiff')
-    browse_ds = driver.Create(str(tmp_browse_path), browse_array.shape[1], browse_array.shape[0], 4, gdal.GDT_Byte)
+    browse_ds = driver.Create(
+        utf8_path=str(browse_path),
+        xsize=browse_array.shape[1],
+        ysize=browse_array.shape[0],
+        bands=4,
+        eType=gdal.GDT_Byte,
+        options={'COMPRESS': 'LZW', 'TILED': 'YES'},
+    )
     browse_ds.SetGeoTransform(co_pol_ds.GetGeoTransform())
     browse_ds.SetProjection(co_pol_ds.GetProjection())
     for i in range(4):
@@ -128,17 +126,6 @@ def create_browse_image(co_pol_path: Path, cross_pol_path: Path, working_dir: Pa
     cross_pol_ds = None
     browse_ds = None
 
-    browse_path = working_dir / f'{co_pol_path.stem[:-3]}_rgb.tif'
-    gdal.Warp(
-        browse_path,
-        tmp_browse_path,
-        dstSRS='+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs',
-        xRes=2.74658203125e-4,
-        yRes=2.74658203125e-4,
-        format='GTiff',
-        creationOptions=['COMPRESS=LZW', 'TILED=YES'],
-    )
-    tmp_browse_path.unlink()
     return browse_path
 
 
@@ -167,7 +154,8 @@ def create_browse_and_upload(
 
 
 def lambda_handler(event, context):
-    create_browse_and_upload(event['granule'], os.environ['BUCKET'], working_dir=Path('/tmp'))
+    with tempfile.TemporaryDirectory() as temp_dir:
+        create_browse_and_upload(event['granule'], os.environ['BUCKET'], working_dir=Path(temp_dir))
 
 
 def main():
