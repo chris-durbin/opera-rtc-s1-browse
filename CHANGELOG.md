@@ -6,10 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [PEP 440](https://www.python.org/dev/peps/pep-0440/)
 and uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.2.2]
+## [0.3.0]
 
 ### Changed
+* Output GeoTIFFs now have the same projection and pixel size as the input GeoTIFFs
 * Scaling of browse images to convert to amplitude first, then scale between 0.14,0.52 for co-pol and 0.05,0.259 for cross pol
+
+### Removed
+* Support for deploying as an AWS Lambda application
 
 ## [0.2.1]
 
