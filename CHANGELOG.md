@@ -9,7 +9,7 @@ and uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [0.2.2]
 
 ### Changed
-* Scaling of browse images to be between 0.14,0.52 for co-pol and 0.05,0.259 for cross pol
+* Scaling of browse images to convert to amplitude first, then scale between 0.14,0.52 for co-pol and 0.05,0.259 for cross pol
 
 ## [0.2.1]
 
