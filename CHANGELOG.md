@@ -7,6 +7,10 @@ and this project adheres to [PEP 440](https://www.python.org/dev/peps/pep-0440/)
 and uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [0.3.0]
+
+### Changed
+* Output GeoTIFFs now have the same projection and pixel size as the input GeoTIFFs
+
 ### Removed
 * Support for deploying as an AWS Lambda application
 
