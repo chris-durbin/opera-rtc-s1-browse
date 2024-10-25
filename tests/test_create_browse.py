@@ -31,7 +31,7 @@ def test_create_browse_array():
 
 
 def test_create_browse_image(tmp_path):
-    datadir = Path.cwd() / 'tests' / 'data'
+    datadir = Path(__file__).parent / 'data'
 
     co_pol_path = datadir / 'test_VV.tif'
     cross_pol_path = datadir / 'test_VH.tif'
