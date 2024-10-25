@@ -5,6 +5,5 @@ channels:
 dependencies:
   - python=3.11
   - pip
-  - libgdal=3.9.2
-  - pip:
-      - --editable .[develop]
+  - gdal=3.9.2
+  - numpy=2.1.2
