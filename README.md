@@ -14,8 +14,8 @@ $ create_browse --help
 usage: create_browse [-h] co_pol_path cross_pol_path
 
 positional arguments:
-  co_pol_path     Path to the co-polarization (VV) RTC image
-  cross_pol_path  Path to the cross-polarization (VH) RTC image
+  co_pol_path     Path to the co-polarized (VV) RTC image
+  cross_pol_path  Path to the cross-polarized (VH) RTC image
 
 options:
   -h, --help      show this help message and exit

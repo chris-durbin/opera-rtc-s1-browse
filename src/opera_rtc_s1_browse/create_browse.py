@@ -100,8 +100,8 @@ def main():
         create_browse foo_VV.tif foo_VH.tif
     """
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('co_pol_path', type=Path, help='Path to the co-polarization (VV) image')
-    parser.add_argument('cross_pol_path', type=Path, help='Path to the cross-polarization (VH) image')
+    parser.add_argument('co_pol_path', type=Path, help='Path to the co-polarized (VV) image')
+    parser.add_argument('cross_pol_path', type=Path, help='Path to the cross-polarized (VH) image')
     args = parser.parse_args()
 
     create_browse_image(args.co_pol_path, args.cross_pol_path, Path('.'))
