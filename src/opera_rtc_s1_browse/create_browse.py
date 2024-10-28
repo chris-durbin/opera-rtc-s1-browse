@@ -1,47 +1,11 @@
-"""
-opera-rtc-s1-browse processing
-"""
-
 import argparse
-import os
-import tempfile
 from pathlib import Path
 
-import boto3
-import earthaccess
 import numpy as np
 from osgeo import gdal
 
 
 gdal.UseExceptions()
-s3 = boto3.client('s3')
-
-
-def download_data(granule: str, working_dir: Path) -> tuple[Path, Path]:
-    """Download co-pol and cross-pol images for an OPERA S1 RTC granule.
-
-    Args:
-        granule: The granule to download data for.
-        working_dir: Working directory to store the downloaded files.
-
-    Returns:
-        Path to the co-pol and cross-pol images.
-    """
-    results = earthaccess.search_data(
-        short_name='OPERA_L2_RTC-S1_V1',
-        granule_ur=granule,
-    )
-    if not results:
-        raise ValueError(f'Granule {granule} not found in collection OPERA_L2_RTC-S1_V1')
-
-    links = [link for link in results[0].data_links() if link.endswith('VV.tif') or link.endswith('VH.tif')]
-    if len(links) != 2:
-        raise ValueError(f'VV+VH links not found for granule {granule}')
-
-    paths = earthaccess.download(links, str(working_dir))
-
-    cross_pol_path, co_pol_path = [Path(path) for path in sorted(paths)]
-    return co_pol_path, cross_pol_path
 
 
 def normalize_image_array(input_array: np.ndarray, vmin: float, vmax: float) -> np.ndarray:
@@ -89,7 +53,7 @@ def create_browse_array(co_pol_array: np.ndarray, cross_pol_array: np.ndarray) -
 
 
 def create_browse_image(co_pol_path: Path, cross_pol_path: Path, working_dir: Path) -> Path:
-    """Create a browse image for an OPERA S1 RTC granule meeting GIBS requirements.
+    """Create an RGB browse image for an OPERA S1 RTC granule
 
     Args:
         co_pol_path: Path to the co-pol image.
@@ -129,47 +93,18 @@ def create_browse_image(co_pol_path: Path, cross_pol_path: Path, working_dir: Pa
     return browse_path
 
 
-def create_browse_and_upload(
-    granule: str,
-    bucket: str = None,
-    working_dir: Path | None = None,
-) -> None:
-    """Create browse images for an OPERA S1 RTC granule.
-
-    Args:
-        granule: The granule to create browse images for.
-        bucket: AWS S3 bucket for upload the final product(s).
-        working_dir: Working directory to store intermediate files.
-    """
-    if working_dir is None:
-        working_dir = Path.cwd()
-
-    co_pol_path, cross_pol_path = download_data(granule, working_dir)
-    browse_path = create_browse_image(co_pol_path, cross_pol_path, working_dir)
-    co_pol_path.unlink()
-    cross_pol_path.unlink()
-
-    if bucket:
-        s3.upload_file(browse_path, bucket, browse_path.name)
-
-
-def lambda_handler(event, context):
-    with tempfile.TemporaryDirectory() as temp_dir:
-        create_browse_and_upload(event['granule'], os.environ['BUCKET'], working_dir=Path(temp_dir))
-
-
 def main():
-    """opera_rtc_s1_browse entrypoint
+    """create_browse entrypoint
 
     Example:
-        create_browse OPERA_L2_RTC-S1_T035-073251-IW2_20240113T020816Z_20240113T113128Z_S1A_30_v1.0
+        create_browse foo_VV.tif foo_VH.tif
     """
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('--bucket', help='AWS S3 bucket for uploading the final product')
-    parser.add_argument('granule', type=str, help='OPERA S1 RTC granule to create a browse image for.')
+    parser.add_argument('co_pol_path', type=Path, help='Path to the co-polarized (VV) image')
+    parser.add_argument('cross_pol_path', type=Path, help='Path to the cross-polarized (VH) image')
     args = parser.parse_args()
 
-    create_browse_and_upload(**args.__dict__)
+    create_browse_image(args.co_pol_path, args.cross_pol_path, Path('.'))
 
 
 if __name__ == '__main__':
