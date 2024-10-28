@@ -31,14 +31,14 @@ class HarmonyAdapter(harmony_service_lib.BaseHarmonyAdapter):
         with tempfile.TemporaryDirectory() as temp_dir:
 
             for asset in item.assets.values():
-                if 'data' in (asset.roles or []) and asset.href.endswith('VV.tif'):
+                if asset.href.endswith('VV.tif'):
                     co_pol_filename = harmony_service_lib.util.download(
                         url=asset.href,
                         destination_dir=temp_dir,
                         logger=self.logger,
                         access_token=self.message.accessToken,
                     )
-                if 'data' in (asset.roles or []) and asset.href.endswith('VH.tif'):
+                if asset.href.endswith('VH.tif'):
                     cross_pol_filename = harmony_service_lib.util.download(
                         url=asset.href,
                         destination_dir=temp_dir,
@@ -46,7 +46,11 @@ class HarmonyAdapter(harmony_service_lib.BaseHarmonyAdapter):
                         access_token=self.message.accessToken,
                     )
 
-            rgb_path = create_browse.create_browse_image(Path(co_pol_filename), Path(cross_pol_filename), Path(temp_dir))
+            rgb_path = create_browse.create_browse_image(
+                co_pol_path=Path(co_pol_filename),
+                cross_pol_path=Path(cross_pol_filename),
+                working_dir=Path(temp_dir),
+            )
 
             url = harmony_service_lib.util.stage(
                 local_filename=str(rgb_path),
