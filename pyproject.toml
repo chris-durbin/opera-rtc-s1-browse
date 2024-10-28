@@ -39,7 +39,6 @@ zip-safe = false
 [tool.setuptools.dynamic]
 readme = {file = ["README.md"], content-type = "text/markdown"}
 dependencies = {file = ["requirements.txt"]}
-optional-dependencies = {develop = {file = ["requirements-develop.txt"]}}
 
 [tool.setuptools.packages.find]
 where = ["src"]

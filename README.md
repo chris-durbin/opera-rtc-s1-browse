@@ -35,7 +35,7 @@ options:
    ```
 5. Install the opera-rtc-s1-browse package in your conda environment
    ```
-   python -m pip install -e ".[develop]"
+   python -m pip install -e .
    ```
 
 To run all commands in sequence use:
@@ -44,7 +44,7 @@ git clone git@github.com:ASFHyP3/opera-rtc-s1-browse.git
 cd opera-rtc-s1-browse
 mamba env create -f environment.yml
 mamba activate opera-rtc-s1-browse
-python -m pip install -e ".[develop]"
+python -m pip install -e .
 ```
 
 ## License
