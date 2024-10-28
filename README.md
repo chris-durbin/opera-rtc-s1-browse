@@ -27,6 +27,7 @@ options:
 2. Download a local version of the `opera-rtc-s1-browse` repository
    ```
    git clone git@github.com:ASFHyP3/opera-rtc-s1-browse.git
+   cd opera-rtc-s1-browse
    ```
 3. In the base directory for this project, create your Python environment and activate it
    ```
