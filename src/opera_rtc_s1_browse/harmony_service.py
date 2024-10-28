@@ -50,7 +50,7 @@ class HarmonyAdapter(harmony_service_lib.BaseHarmonyAdapter):
 
             url = harmony_service_lib.util.stage(
                 local_filename=str(rgb_path),
-                remote_filename=rgb_path.stem,
+                remote_filename=rgb_path.name,
                 mime='image/tiff',
                 location=self.message.stagingLocation,
                 logger=self.logger,
@@ -58,7 +58,7 @@ class HarmonyAdapter(harmony_service_lib.BaseHarmonyAdapter):
 
             result = item.clone()
             result.assets = {
-                'rgb_browse': pystac.Asset(url, title=rgb_path.stem, media_type='image/tiff', roles=['visual'])
+                'rgb_browse': pystac.Asset(url, title=rgb_path.name, media_type='image/tiff', roles=['visual'])
             }
 
         return result
