@@ -34,7 +34,7 @@ options:
    mamba env create -f environment.yml
    mamba activate opera-rtc-s1-browse
    ```
-5. Install the opera-rtc-s1-browse package in your conda environment
+4. Install the opera-rtc-s1-browse package in your conda environment
    ```
    python -m pip install -e .
    ```
