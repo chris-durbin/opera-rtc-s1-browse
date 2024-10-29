@@ -9,6 +9,7 @@ import pytest
 
 from opera_rtc_s1_browse import harmony_service
 
+
 def mock_download(**kwargs) -> str:
     assert set(kwargs.keys()) == {'url', 'destination_dir', 'logger', 'access_token'}
 
