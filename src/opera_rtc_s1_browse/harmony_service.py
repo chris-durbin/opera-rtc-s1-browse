@@ -10,7 +10,7 @@ from opera_rtc_s1_browse import create_browse
 
 class HarmonyAdapter(harmony_service_lib.BaseHarmonyAdapter):
 
-    def process_item(self, item: pystac.Item, source: harmony_service_lib.message.Source) -> pystac.Item:
+    def process_item(self, item: pystac.Item, source: harmony_service_lib.message.Source = None) -> pystac.Item:
         """
         Processes a single input item.
 
