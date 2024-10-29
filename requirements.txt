@@ -1,5 +1,5 @@
 # duplicated in environment.yml
-gdal[numpy]==3.9.2
+gdal[numpy]==3.9.3
 numpy==2.1.2
 pytest==8.3.3
 pytest-cov==5.0.0
