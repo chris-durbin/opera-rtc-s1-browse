@@ -28,6 +28,9 @@ class HarmonyAdapter(harmony_service_lib.BaseHarmonyAdapter):
         """
         self.logger.info(f'Processing item {item.id}')
 
+        co_pol_filename = None
+        cross_pol_filename = None
+
         with tempfile.TemporaryDirectory() as temp_dir:
 
             for asset in item.assets.values():
@@ -45,6 +48,12 @@ class HarmonyAdapter(harmony_service_lib.BaseHarmonyAdapter):
                         logger=self.logger,
                         access_token=self.message.accessToken,
                     )
+
+            if co_pol_filename is None:
+                raise ValueError(f'No co-pol tif found for {item.id}')
+
+            if cross_pol_filename is None:
+                raise ValueError(f'No cross-pol tif found for {item.id}')
 
             rgb_path = create_browse.create_browse_image(
                 co_pol_path=Path(co_pol_filename),

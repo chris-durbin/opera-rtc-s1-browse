@@ -5,6 +5,7 @@ from unittest.mock import patch
 
 import harmony_service_lib
 import pystac
+import pytest
 
 from opera_rtc_s1_browse import harmony_service
 
@@ -81,3 +82,49 @@ def test_process_item():
             patch('harmony_service_lib.util.stage', mock_stage):
 
         assert adapter.process_item(item).to_dict() == expected_result.to_dict()
+
+
+def test_process_item_missing_co_pol():
+    adapter = harmony_service.HarmonyAdapter(
+        harmony_service_lib.message.Message(
+            {
+                'accessToken': 'mock-access-token',
+            }
+        )
+    )
+    item = pystac.Item(
+        id='mock-pystac-item',
+        geometry=None,
+        bbox=None,
+        datetime=datetime(2024, 1, 1),
+        properties={},
+        assets={
+            'data': pystac.Asset(href='url/to/mock_VH.tif'),
+        },
+    )
+    with patch('harmony_service_lib.util.download', mock_download), \
+            pytest.raises(ValueError, match='No co-pol tif found for mock-pystac-item'):
+        adapter.process_item(item)
+
+
+def test_process_item_missing_cross_pol():
+    adapter = harmony_service.HarmonyAdapter(
+        harmony_service_lib.message.Message(
+            {
+                'accessToken': 'mock-access-token',
+            }
+        )
+    )
+    item = pystac.Item(
+        id='mock-pystac-item',
+        geometry=None,
+        bbox=None,
+        datetime=datetime(2024, 1, 1),
+        properties={},
+        assets={
+            'data': pystac.Asset(href='url/to/mock_VV.tif'),
+        },
+    )
+    with patch('harmony_service_lib.util.download', mock_download), \
+            pytest.raises(ValueError, match='No cross-pol tif found for mock-pystac-item'):
+        adapter.process_item(item)
