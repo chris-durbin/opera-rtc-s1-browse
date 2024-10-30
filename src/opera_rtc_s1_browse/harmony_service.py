@@ -10,7 +10,7 @@ from opera_rtc_s1_browse import create_browse
 
 class HarmonyAdapter(harmony_service_lib.BaseHarmonyAdapter):
 
-    def process_item(self, item: pystac.Item, source: harmony_service_lib.message.Source) -> pystac.Item:
+    def process_item(self, item: pystac.Item, source: harmony_service_lib.message.Source | None = None) -> pystac.Item:
         """
         Processes a single input item.
 
@@ -28,30 +28,28 @@ class HarmonyAdapter(harmony_service_lib.BaseHarmonyAdapter):
         """
         self.logger.info(f'Processing item {item.id}')
 
+        co_pol_url = get_asset_url(item, '_VV.tif')
+        cross_pol_url = get_asset_url(item, '_VH.tif')
+
         with tempfile.TemporaryDirectory() as temp_dir:
 
-            for asset in item.assets.values():
-                if asset.href.endswith('VV.tif'):
-                    co_pol_filename = harmony_service_lib.util.download(
-                        url=asset.href,
-                        destination_dir=temp_dir,
-                        logger=self.logger,
-                        access_token=self.message.accessToken,
-                    )
-                if asset.href.endswith('VH.tif'):
-                    cross_pol_filename = harmony_service_lib.util.download(
-                        url=asset.href,
-                        destination_dir=temp_dir,
-                        logger=self.logger,
-                        access_token=self.message.accessToken,
-                    )
-
+            co_pol_filename = harmony_service_lib.util.download(
+                url=co_pol_url,
+                destination_dir=temp_dir,
+                logger=self.logger,
+                access_token=self.message.accessToken,
+            )
+            cross_pol_filename = harmony_service_lib.util.download(
+                url=cross_pol_url,
+                destination_dir=temp_dir,
+                logger=self.logger,
+                access_token=self.message.accessToken,
+            )
             rgb_path = create_browse.create_browse_image(
                 co_pol_path=Path(co_pol_filename),
                 cross_pol_path=Path(cross_pol_filename),
                 working_dir=Path(temp_dir),
             )
-
             url = harmony_service_lib.util.stage(
                 local_filename=str(rgb_path),
                 remote_filename=rgb_path.name,
@@ -66,6 +64,13 @@ class HarmonyAdapter(harmony_service_lib.BaseHarmonyAdapter):
             }
 
         return result
+
+
+def get_asset_url(item: pystac.Item, suffix: str) -> str:
+    try:
+        return next(asset.href for asset in item.assets.values() if asset.href.endswith(suffix))
+    except StopIteration:
+        raise ValueError(f'No {suffix} asset found for {item.id}')
 
 
 def main() -> None:
