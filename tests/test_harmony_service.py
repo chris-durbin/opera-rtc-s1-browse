@@ -104,7 +104,7 @@ def test_process_item_missing_co_pol():
         },
     )
     with patch('harmony_service_lib.util.download', mock_download), \
-            pytest.raises(ValueError, match='No VV.tif found for mock-pystac-item'):
+            pytest.raises(ValueError, match='No VV.tif asset found for mock-pystac-item'):
         adapter.process_item(item)
 
 
@@ -127,5 +127,5 @@ def test_process_item_missing_cross_pol():
         },
     )
     with patch('harmony_service_lib.util.download', mock_download), \
-            pytest.raises(ValueError, match='No VH.tif found for mock-pystac-item'):
+            pytest.raises(ValueError, match='No VH.tif asset found for mock-pystac-item'):
         adapter.process_item(item)

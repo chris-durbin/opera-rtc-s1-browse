@@ -50,10 +50,10 @@ class HarmonyAdapter(harmony_service_lib.BaseHarmonyAdapter):
                     )
 
             if co_pol_filename is None:
-                raise ValueError(f'No VV.tif found for {item.id}')
+                raise ValueError(f'No VV.tif asset found for {item.id}')
 
             if cross_pol_filename is None:
-                raise ValueError(f'No VH.tif found for {item.id}')
+                raise ValueError(f'No VH.tif asset found for {item.id}')
 
             rgb_path = create_browse.create_browse_image(
                 co_pol_path=Path(co_pol_filename),
