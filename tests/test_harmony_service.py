@@ -86,13 +86,7 @@ def test_process_item():
 
 
 def test_process_item_missing_co_pol():
-    adapter = harmony_service.HarmonyAdapter(
-        harmony_service_lib.message.Message(
-            {
-                'accessToken': 'mock-access-token',
-            }
-        )
-    )
+    adapter = harmony_service.HarmonyAdapter(harmony_service_lib.message.Message({}))
     item = pystac.Item(
         id='mock-pystac-item',
         geometry=None,
@@ -103,19 +97,12 @@ def test_process_item_missing_co_pol():
             'data': pystac.Asset(href='url/to/mock_VH.tif'),
         },
     )
-    with patch('harmony_service_lib.util.download', mock_download), \
-            pytest.raises(ValueError, match='No _VV.tif asset found for mock-pystac-item'):
+    with pytest.raises(ValueError, match='No _VV.tif asset found for mock-pystac-item'):
         adapter.process_item(item)
 
 
 def test_process_item_missing_cross_pol():
-    adapter = harmony_service.HarmonyAdapter(
-        harmony_service_lib.message.Message(
-            {
-                'accessToken': 'mock-access-token',
-            }
-        )
-    )
+    adapter = harmony_service.HarmonyAdapter(harmony_service_lib.message.Message({}))
     item = pystac.Item(
         id='mock-pystac-item',
         geometry=None,
@@ -126,6 +113,5 @@ def test_process_item_missing_cross_pol():
             'data': pystac.Asset(href='url/to/mock_VV.tif'),
         },
     )
-    with patch('harmony_service_lib.util.download', mock_download), \
-            pytest.raises(ValueError, match='No _VH.tif asset found for mock-pystac-item'):
+    with pytest.raises(ValueError, match='No _VH.tif asset found for mock-pystac-item'):
         adapter.process_item(item)

@@ -28,31 +28,28 @@ class HarmonyAdapter(harmony_service_lib.BaseHarmonyAdapter):
         """
         self.logger.info(f'Processing item {item.id}')
 
+        co_pol_url = get_asset_url(item, '_VV.tif')
+        cross_pol_url = get_asset_url(item, '_VH.tif')
 
         with tempfile.TemporaryDirectory() as temp_dir:
 
-            co_pol_url = get_asset_url(item, '_VV.tif')
             co_pol_filename = harmony_service_lib.util.download(
                 url=co_pol_url,
                 destination_dir=temp_dir,
                 logger=self.logger,
                 access_token=self.message.accessToken,
             )
-
-            cross_pol_url = get_asset_url(item, '_VH.tif')
             cross_pol_filename = harmony_service_lib.util.download(
                 url=cross_pol_url,
                 destination_dir=temp_dir,
                 logger=self.logger,
                 access_token=self.message.accessToken,
             )
-
             rgb_path = create_browse.create_browse_image(
                 co_pol_path=Path(co_pol_filename),
                 cross_pol_path=Path(cross_pol_filename),
                 working_dir=Path(temp_dir),
             )
-
             url = harmony_service_lib.util.stage(
                 local_filename=str(rgb_path),
                 remote_filename=rgb_path.name,
