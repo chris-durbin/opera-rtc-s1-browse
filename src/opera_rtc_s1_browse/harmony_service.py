@@ -1,7 +1,6 @@
 import argparse
 import tempfile
 from pathlib import Path
-from typing import Iterable
 
 import harmony_service_lib
 import pystac
