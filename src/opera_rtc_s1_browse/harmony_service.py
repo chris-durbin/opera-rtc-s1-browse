@@ -1,6 +1,7 @@
 import argparse
 import tempfile
 from pathlib import Path
+from typing import Iterable
 
 import harmony_service_lib
 import pystac
@@ -28,32 +29,24 @@ class HarmonyAdapter(harmony_service_lib.BaseHarmonyAdapter):
         """
         self.logger.info(f'Processing item {item.id}')
 
-        co_pol_filename = None
-        cross_pol_filename = None
 
         with tempfile.TemporaryDirectory() as temp_dir:
 
-            for asset in item.assets.values():
-                if asset.href.endswith('VV.tif'):
-                    co_pol_filename = harmony_service_lib.util.download(
-                        url=asset.href,
-                        destination_dir=temp_dir,
-                        logger=self.logger,
-                        access_token=self.message.accessToken,
-                    )
-                if asset.href.endswith('VH.tif'):
-                    cross_pol_filename = harmony_service_lib.util.download(
-                        url=asset.href,
-                        destination_dir=temp_dir,
-                        logger=self.logger,
-                        access_token=self.message.accessToken,
-                    )
+            co_pol_url = get_asset_url(item, '_VV.tif')
+            co_pol_filename = harmony_service_lib.util.download(
+                url=co_pol_url,
+                destination_dir=temp_dir,
+                logger=self.logger,
+                access_token=self.message.accessToken,
+            )
 
-            if co_pol_filename is None:
-                raise ValueError(f'No VV.tif asset found for {item.id}')
-
-            if cross_pol_filename is None:
-                raise ValueError(f'No VH.tif asset found for {item.id}')
+            cross_pol_url = get_asset_url(item, '_VH.tif')
+            cross_pol_filename = harmony_service_lib.util.download(
+                url=cross_pol_url,
+                destination_dir=temp_dir,
+                logger=self.logger,
+                access_token=self.message.accessToken,
+            )
 
             rgb_path = create_browse.create_browse_image(
                 co_pol_path=Path(co_pol_filename),
@@ -75,6 +68,13 @@ class HarmonyAdapter(harmony_service_lib.BaseHarmonyAdapter):
             }
 
         return result
+
+
+def get_asset_url(item: pystac.Item, suffix: str) -> str:
+    try:
+        return next(asset.href for asset in item.assets.values() if asset.href.endswith(suffix))
+    except StopIteration:
+        raise ValueError(f'No {suffix} asset found for {item.id}')
 
 
 def main() -> None:
