@@ -6,6 +6,7 @@ from unittest.mock import patch
 import harmony_service_lib
 import pystac
 import pytest
+from harmony_service_lib.exceptions import HarmonyException
 
 from opera_rtc_s1_browse import harmony_service
 
@@ -97,7 +98,7 @@ def test_process_item_missing_co_pol():
             'data': pystac.Asset(href='url/to/mock_VH.tif'),
         },
     )
-    with pytest.raises(ValueError, match='No _VV.tif asset found for mock-pystac-item'):
+    with pytest.raises(HarmonyException, match=r'^No _VV.tif asset found for mock-pystac-item$'):
         adapter.process_item(item)
 
 
@@ -113,5 +114,5 @@ def test_process_item_missing_cross_pol():
             'data': pystac.Asset(href='url/to/mock_VV.tif'),
         },
     )
-    with pytest.raises(ValueError, match='No _VH.tif asset found for mock-pystac-item'):
+    with pytest.raises(HarmonyException, match=r'^No _VH.tif asset found for mock-pystac-item$'):
         adapter.process_item(item)

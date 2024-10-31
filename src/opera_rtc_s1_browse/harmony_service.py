@@ -4,6 +4,7 @@ from pathlib import Path
 
 import harmony_service_lib
 import pystac
+from harmony_service_lib.exceptions import HarmonyException
 
 from opera_rtc_s1_browse import create_browse
 
@@ -70,7 +71,7 @@ def get_asset_url(item: pystac.Item, suffix: str) -> str:
     try:
         return next(asset.href for asset in item.assets.values() if asset.href.endswith(suffix))
     except StopIteration:
-        raise ValueError(f'No {suffix} asset found for {item.id}')
+        raise HarmonyException(f'No {suffix} asset found for {item.id}')
 
 
 def main() -> None:
