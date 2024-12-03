@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Ensure the local library is copied into the build context
+cp -r ../harmony-service-lib-py ./harmony-service-lib
+
+# Build the Docker image
+docker build -t "asf/opera-rtc-reproject:latest" .
+
+# Clean up the copied library after building
+rm -rf ./harmony-service-lib

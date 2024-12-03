@@ -2,6 +2,7 @@ FROM mambaorg/micromamba:latest
 
 WORKDIR /home/mambauser
 
+COPY --chown=$MAMBA_USER:$MAMBA_USER harmony-service-lib /tmp/harmony-service-lib
 COPY --chown=$MAMBA_USER:$MAMBA_USER . /opera-rtc-s1-browse/
 
 RUN micromamba install -y -n base -f /opera-rtc-s1-browse/environment.yml && \

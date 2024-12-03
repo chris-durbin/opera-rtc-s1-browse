@@ -11,5 +11,5 @@ dependencies:
   - pytest-cov=5.0.0
   - setuptools_scm=8.1.0
   - pip:
-      - harmony-service-lib==2.2.0
+      - ./harmony-service-lib
       - pystac==1.11.0
